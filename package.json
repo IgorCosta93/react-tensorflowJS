@@ -1,0 +1,42 @@
+{
+  "name": "dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@antv/data-set": "^0.10.2",
+    "@nivo/bar": "^0.55.0",
+    "@nivo/stream": "^0.55.0",
+    "@tensorflow-models/mobilenet": "^2.0.2",
+    "@tensorflow/tfjs": "^1.2.5",
+    "antd": "^3.15.1",
+    "bizcharts": "^3.5.2",
+    "bizcharts-plugin-slider": "^2.1.1-beta.1",
+    "papaparse": "^5.0.1",
+    "react": "^16.8.4",
+    "react-csv-reader": "^1.2.2",
+    "react-dom": "^16.8.4",
+    "react-google-maps": "^9.4.5",
+    "react-redux": "^6.0.1",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "2.1.8",
+    "react-webcam": "^1.1.1",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.2",
+    "shuffle-seed": "^1.1.6"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
