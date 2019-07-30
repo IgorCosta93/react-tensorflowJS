@@ -4,8 +4,23 @@ import CSVReader from "react-csv-reader";
 import { loadCSV } from './load-csv';
 import _ from 'lodash';
 import Regression from "./Regression";
-import { Button, Select, Row, Spin  } from 'antd';
+import { Button, Select, Row, Form, Input } from 'antd';
 const { Option } = Select;
+
+const formItemLayout = {
+    labelCol: {
+        xs: { span: 24 },
+        sm: { span: 6 },
+        lg: { span: 6 },
+        xl: { span: 6 },
+    },
+    wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 18 },
+        lg: { span: 18 },
+        xl: { span: 18 },
+    },
+};
 
 function LinearRegression(){
     let [ selectFeatures, setSelectFeatures ] = useState([]);
@@ -15,8 +30,9 @@ function LinearRegression(){
         labels: [],
         testFeatures: [],
         testLabels: []
-    })
+    });
     let [ dataColumns, setDataColumns ] = useState([]);
+    let [ dataLabels, setDataLabels ] = useState({});
 
     function handleForce(data){
         setSelectFeatures(selectFeatures = _.cloneDeep(data[0]));
@@ -46,6 +62,12 @@ function LinearRegression(){
         setDataColumns(dataColumns = value)
     }
 
+    function handleLabels(c, value){
+        value = value.replace(/[^\d.-]/g, '')
+        setDataLabels(dataLabels = {...dataLabels,
+            [c]: value
+        })
+    }
 
     return (
         <Fragment>            
@@ -70,6 +92,29 @@ function LinearRegression(){
                                     return <Option key={f}>{f}</Option>
                                 })}
                             </Select>
+                            
+                            {
+                                dataColumns.map(c => {
+                                    return(
+                                        <Form className="baseForm" key={c}> 
+                                            <Form.Item 
+                                                {...formItemLayout} 
+                                                label={c} 
+                                                style={{marginTop: 25}}
+                                                hasFeedback
+                                                required={true}
+                                            >
+                                                <Input 
+                                                    value={dataLabels[c]} 
+                                                    placeholder={`Type the value for ${c}`}
+                                                    onChange={e => handleLabels(c, e.target.value)}
+                                                />
+                                            </Form.Item>
+                                        </Form>
+                                    )
+                                })
+                            }
+
                             <Button 
                                 type="primary" 
                                 onClick={() => setFeatures()} style={{display: "block", margin: "auto", marginTop: 20}}
@@ -87,7 +132,8 @@ function LinearRegression(){
                             labels={csvData.labels}
                             testFeatures={csvData.testFeatures}
                             testLabels={csvData.testLabels}
-                            data={data}
+                            dataColumns={dataColumns}
+                            dataLabels={dataLabels}
                         />
                     : 
                         null
