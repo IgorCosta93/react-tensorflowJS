@@ -10,15 +10,15 @@ const { Option } = Select;
 const formItemLayout = {
     labelCol: {
         xs: { span: 24 },
-        sm: { span: 6 },
-        lg: { span: 6 },
-        xl: { span: 6 },
+        sm: { span: 3 },
+        lg: { span: 3 },
+        xl: { span: 3 },
     },
     wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 18 },
-        lg: { span: 18 },
-        xl: { span: 18 },
+        sm: { span: 14 },
+        lg: { span: 14 },
+        xl: { span: 14 },
     },
 };
 
@@ -33,6 +33,9 @@ function LinearRegression(){
     });
     let [ dataColumns, setDataColumns ] = useState([]);
     let [ dataLabels, setDataLabels ] = useState({});
+    let [ learningRate, setLearningRate ] = useState("");
+    let [ iterations, setIterations ] = useState("");
+    let [ batchSize, setBatchSize ] = useState("");
 
     function handleForce(data){
         setSelectFeatures(selectFeatures = _.cloneDeep(data[0]));
@@ -43,7 +46,6 @@ function LinearRegression(){
         let result = loadCSV(data, {
             shuffle: true,
             splitTest: 50,
-            //dataColumns: ['horsepower', 'weight', 'displacement'],
             dataColumns: dataColumns,
             labelColumns: ['mpg']
         })
@@ -81,17 +83,68 @@ function LinearRegression(){
                 {
                     selectFeatures.length > 0 ?
                         <Row>
-                            <Select
-                                mode="multiple"
-                                style={{ width: '100%' }}
-                                placeholder="Please select"
-                                onChange={handleChange}
-                                style={{display: "block", margin: "auto", marginTop: 40}}
-                            >
-                                {selectFeatures.map(f => {
-                                    return <Option key={f}>{f}</Option>
-                                })}
-                            </Select>
+                            <Form className="baseForm" style={{display: "block", margin: "auto", marginBottom: 80}}>
+                                <Form.Item 
+                                    {...formItemLayout} 
+                                    label={"Features"} 
+                                    style={{marginTop: 25}}
+                                    hasFeedback
+                                    required={true}
+                                >
+                                    <Select
+                                        mode="multiple"
+                                        style={{ width: '100%' }}
+                                        placeholder="Please select"
+                                        onChange={handleChange}
+                                    >
+                                        {selectFeatures.map(f => {
+                                            return <Option key={f}>{f}</Option>
+                                        })}
+                                    </Select> 
+                                </Form.Item>
+
+                                <Form.Item 
+                                    {...formItemLayout} 
+                                    label={"Learning Rate"} 
+                                    style={{marginTop: 25}}
+                                    hasFeedback
+                                    required={true}
+                                >
+                                    <Input 
+                                        value={learningRate} 
+                                        placeholder={`Type the value for learning rate.`}
+                                        onChange={e => setLearningRate(learningRate = e.target.value)}
+                                    />
+                                </Form.Item>
+
+                                <Form.Item 
+                                    {...formItemLayout} 
+                                    label={"Iterations"} 
+                                    style={{marginTop: 25}}
+                                    hasFeedback
+                                    required={true}
+                                >
+                                    <Input 
+                                        value={iterations} 
+                                        placeholder={`Type the value for iterations.`}
+                                        onChange={e => setIterations(iterations = e.target.value)}
+                                    />
+                                </Form.Item>
+
+                                <Form.Item 
+                                    {...formItemLayout} 
+                                    label={"Batch Size"} 
+                                    style={{marginTop: 25}}
+                                    hasFeedback
+                                    required={true}
+                                >
+                                    <Input 
+                                        value={batchSize} 
+                                        placeholder={`Type the value for batch size.`}
+                                        onChange={e => setBatchSize(batchSize = e.target.value)}
+                                    />
+                                </Form.Item>
+                            </Form>
                             
                             {
                                 dataColumns.map(c => {
@@ -134,6 +187,9 @@ function LinearRegression(){
                             testLabels={csvData.testLabels}
                             dataColumns={dataColumns}
                             dataLabels={dataLabels}
+                            learningRate={learningRate}
+                            iterations={iterations}
+                            batchSize={batchSize}
                         />
                     : 
                         null

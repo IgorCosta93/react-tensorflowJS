@@ -1120,6 +1120,11 @@
     "@svgr/plugin-svgo" "^4.0.3"
     loader-utils "^1.1.0"
 
+"@tensorflow-models/knn-classifier@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@tensorflow-models/knn-classifier/-/knn-classifier-1.2.1.tgz#2ef8a0d18f73b7d649628ea77c3119f66d0f4bb9"
+  integrity sha512-goiJ7l0jqXBC+Xpzt6w1uH+qkgYtR7LqOwTC7NY6qzKyylC/cFXSOyCmZl2s+xE4RxSjlR8lHvtpVlWpJ52daw==
+
 "@tensorflow-models/mobilenet@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@tensorflow-models/mobilenet/-/mobilenet-2.0.2.tgz#3389ff8907c52896e4318348edf982d8245bcd30"

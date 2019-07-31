@@ -1,8 +1,7 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import LinearRegressionCalc from "./linear-regression";
-import { loadCSV } from './load-csv';
-import { Button, Select, Row, Spin, notification } from 'antd';
-const { Option } = Select;
+import Line from '../../common/charts/Line';
+import { Button, Row, Spin, notification } from 'antd';
 
 const openNotification = (type, title, description, btn, duration) => {
     notification[type]({
@@ -13,15 +12,16 @@ const openNotification = (type, title, description, btn, duration) => {
     });
 };
 
-function Regression({features, labels, testFeatures, testLabels, dataColumns, dataLabels}){
+function Regression({features, labels, testFeatures, testLabels, dataColumns, dataLabels, learningRate, iterations, batchSize}){
     let [ r2, setR2 ] = useState(0);
     let [ mpg, setMpg ] = useState(0);
     let [ loading, setLoading ] = useState(false);
+    let [ mse, setMse ] = useState([]);
 
     const regression = new LinearRegressionCalc(features, labels, {
-        learningRate: 0.1, 
-        iterations: 10,
-        batchSize: 10  
+        learningRate: parseFloat(learningRate), 
+        iterations: parseFloat(iterations),
+        batchSize: parseFloat(batchSize)  
     });
 
     function predict(){
@@ -42,16 +42,9 @@ function Regression({features, labels, testFeatures, testLabels, dataColumns, da
             openNotification('warning', title, description, "", 0);
         }else{
             setLoading(loading = true);
-
-            regression.train();
-
+            regression.train(mse, setMse);
             regression.test(testFeatures, testLabels, r2, setR2);
-
-            /*let result = regression.predict([
-                [120,2,380]
-            ]);*/
             let result = regression.predict([prediction]);
-            
             result.data().then((r)=>{
                 setMpg(mpg = r[0])
                 setLoading(loading = false);
@@ -66,12 +59,18 @@ function Regression({features, labels, testFeatures, testLabels, dataColumns, da
             {
                 r2 > 0 ?
                     <div style={{display: "block", margin: "auto", marginTop: 20}}>
-                        <h1>R2 is: {r2.toFixed(2)}</h1>
-                        <br/>
+                        <h1>R2 is: {r2.toFixed(2)}</h1><br/>
                         <h1>MPG : {mpg.toFixed(2)}</h1>
                     </div>
                 : null
             }
+            
+            {
+                mse.length > 0 ?
+                    <Line data={mse} style={{display: "block", marginTop: 20, marginRigth: 20}}/>
+                : null
+            }
+            
             <Button 
                 type="primary" 
                 onClick={() => predict()} style={{display: "block", margin: "auto", marginTop: 20}}

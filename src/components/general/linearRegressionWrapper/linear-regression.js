@@ -25,8 +25,10 @@ class LinearRegression{
         this.weights = this.weights.sub(slopes.mul(this.options.learningRate));
     }
 
-    train(){
+    train(mse, setMse){
         const batchQuantity = Math.floor(this.features.shape[0] / this.options.batchSize);
+        let mseValues = []; 
+        let mseTreated = [];
 
         for(let i = 0; i < this.options.iterations; i++){
             for(let j = 0; j < batchQuantity; j++){
@@ -37,9 +39,22 @@ class LinearRegression{
 
                 this.gradientDescent(featureSlice, labelSize);
             }
-            //this.recordMSE();
+            let value = this.recordMSE();
             this.updateLearningRate();
+
+            mseValues.push(parseFloat(value))
         }
+
+        mseValues.map((mse, i) => {
+            mseTreated.push({
+                label: `${i}`,
+                feature: "MSE",
+                value: mse
+            })
+            return null
+        })
+
+        setMse(mse = mseTreated)
     }
 
     predict(observations){
@@ -100,10 +115,11 @@ class LinearRegression{
             .sub(this.labels)
             .pow(2)
             .sum()
-            .div(this.features.shape[0])
-            .get();
+            .div(this.features.shape[0]);
 
-        this.mseHistory.unshift(mse);
+        //this.mseHistory.unshift(parseFloat(mse.toString().slice(11, 28)));
+        //console.log(mse.toString().slice(11, 28))
+        return mse.toString().slice(11, 28);
     }
 
     updateLearningRate(){

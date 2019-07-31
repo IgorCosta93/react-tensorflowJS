@@ -44,6 +44,18 @@ function Sidebar({ props }){
                         <span>Linear Regression</span>
                     </Link>
                 </Menu.Item>
+                <Menu.Item key="6">
+                    <Link to="/webcamClassifier">
+                        <Icon type="setting" />
+                        <span>Webcam Classifier</span>
+                    </Link>
+                </Menu.Item>
+                <Menu.Item key="7">
+                    <Link to="/imageClassifier">
+                        <Icon type="picture" />
+                        <span>Image Classifier</span>
+                    </Link>
+                </Menu.Item>
             </Menu>
         </Sider>
     )
