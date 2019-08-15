@@ -56,6 +56,18 @@ function Sidebar({ props }){
                         <span>Image Classifier</span>
                     </Link>
                 </Menu.Item>
+                <Menu.Item key="8">
+                    <Link to="/multiRegression">
+                        <Icon type="bar-chart" />
+                        <span>Multi Regression</span>
+                    </Link>
+                </Menu.Item>
+                <Menu.Item key="9">
+                    <Link to="/predictingDiabetes">
+                        <Icon type="dot-chart" />
+                        <span>Predicting Diabetes</span>
+                    </Link>
+                </Menu.Item>
             </Menu>
         </Sider>
     )

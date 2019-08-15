@@ -12,6 +12,8 @@ import WebcamRecognizeContainer from "./containers/WebcamRecognize";
 import LinearRegressionContainer from "./containers/LinearRegression";
 import WebcamClassifierContainer from "./containers/WebcamClassifier";
 import ImageClassifierContainer from "./containers/ImageClassifier";
+import MultiRegressionContainer from "./containers/MultiRegression";
+import PredictingDiabetesContainer from "./containers/PredictingDiabetes";
 class App extends Component {
 
   state = {
@@ -36,6 +38,8 @@ class App extends Component {
               <PrivateRoute exact path="/linearRegression" component={LinearRegressionContainer} breadcrumb="Linear Regression"/>
               <PrivateRoute exact path="/webcamClassifier" component={WebcamClassifierContainer} breadcrumb="Webcam Classifier"/>
               <PrivateRoute exact path="/imageClassifier" component={ImageClassifierContainer} breadcrumb="Image Classifier"/>
+              <PrivateRoute exact path="/multiRegression" component={MultiRegressionContainer} breadcrumb="Multi Regression"/>
+              <PrivateRoute exact path="/predictingDiabetes" component={PredictingDiabetesContainer} breadcrumb="Predicting Diabetes"/>
               <Redirect to="/"/>
             </Switch>
           </BrowserRouter>
