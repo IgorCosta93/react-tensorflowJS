@@ -2,32 +2,14 @@ import React, { Fragment, useState, useEffect } from "react";
 import * as tfvis from "@tensorflow/tfjs-vis";
 import * as tf from '@tensorflow/tfjs';
 import { Button, Select, Row, Form, Input, Divider } from 'antd';
-import * as Papa from "papaparse";
-import _ from "lodash";
+import PieChart from "./components/PieChart";
+import Histogram from "./components/HistogramCharts";
 import * as Plotly from "plotly.js";
+import { loadData, renderHistogram, renderScatter } from "./functions";
 
 function PredictingDiabetes(){
     let [ data, setData ] = useState([]);
     let [ model, setModel ] = useState();
-
-    Papa.parsePromise = function(file) {
-        return new Promise(function(complete, error) {
-            Papa.parse(file, {
-                header: true,
-                download: true,
-                dynamicTyping: true,
-                complete,
-                error      
-            });
-        });
-    };
-
-    const loadData = async () => {
-        const csv = await Papa.parsePromise(
-            "https://raw.githubusercontent.com/curiousily/Logistic-Regression-with-TensorFlo\w-js/master/src/data/diabetes.csv"
-        );
-        return csv.data;
-    };
 
     async function start(){
         if(data.length === 0){
@@ -35,7 +17,34 @@ function PredictingDiabetes(){
             console.log(newData)
             setData(data = newData)
         }
-        renderOutcomes(data);
+
+        const features = ["Glucose", "Age", "Insulin", "BloodPressure"];
+
+        const [trainDs, validDs, xTest, yTest] = createDataSets(
+            data,
+            features,
+            0.1,
+            16
+        );
+        
+        const model = await trainLogisticRegression(
+            features.length,
+            trainDs,
+            validDs
+        );
+
+        const preds = model.predict(xTest).argMax(-1);
+        const labels = yTest.argMax(-1);
+
+        const confusionMatrix = await tfvis.metrics.confusionMatrix(labels, preds);
+
+        const container = document.getElementById("confusion-matrix");
+
+        tfvis.render.confusionMatrix(container, {
+            values: confusionMatrix,
+            tickLabels: ["Healthy", "Diabetic"]
+        });
+
     }
 
     const oneHot = outcome => Array.from(tf.oneHot(outcome, 2).dataSync());
@@ -67,42 +76,65 @@ function PredictingDiabetes(){
         ];
     };
 
-    const renderOutcomes = data => {
-        const outcomes = data.map(r => r.Outcome);
-      
-        const [diabetic, healthy] = _.partition(outcomes, o => o === 1);
-      
-        const chartData = [
-            {
-                labels: ["Diabetic", "Healthy"],
-                values: [diabetic.length, healthy.length],
-                type: "pie",
-                opacity: 0.6,
-                marker: {
-                    colors: ["gold", "forestgreen"]
+    const trainLogisticRegression = async (featureCount, trainDs, validDs) => {
+        const model = tf.sequential();
+        /*model.add(
+            tf.layers.dense({
+                units: 12,
+                activation: "relu",
+            })
+        );*/
+        model.add(
+            tf.layers.dense({
+                units: 2,
+                activation: "softmax",
+                inputShape: [featureCount]
+            })
+        );
+        const optimizer = tf.train.adam(0.001);
+        
+        model.compile({
+            optimizer: optimizer,
+            loss: "binaryCrossentropy",
+            metrics: ["accuracy"]
+        });
+        const trainLogs = [];
+        const lossContainer = document.getElementById("loss-cont");
+        const accContainer = document.getElementById("acc-cont");
+        
+        console.log("Training...");
+        
+        await model.fitDataset(trainDs, {
+            epochs: 70,
+            validationData: validDs,
+            callbacks: {
+                onEpochEnd: async (epoch, logs) => {
+                    trainLogs.push(logs);
+                    tfvis.show.history(lossContainer, trainLogs, ["loss", "val_loss"]);
+                    tfvis.show.history(accContainer, trainLogs, ["acc", "val_acc"]);
                 }
             }
-        ];
-      
-        Plotly.newPlot("outcome-cont", chartData, {
-            title: "Healthy vs Diabetic"
         });
+      
+        return model;
     };
 
     start();
         
     return(
         <Fragment>
+            <PieChart data={data}/>
+            <Histogram data={data}/>
             <Row style={{marginLeft: 20, marginRight: 40}}>
-                <div id="outcome-cont"></div>
+                <div id="confusion-matrix"></div>
+            </Row>
+            <Divider />
+            <Row style={{marginLeft: 20, marginRight: 40}}>
+                <div id="loss-cont"></div>
             </Row>
             <Divider />
             <Row style={{marginLeft: 20, marginRight: 40}}>
                 <div id="acc-cont"></div>
-            </Row>
-            <Divider />
-            <Row style={{marginLeft: 20, marginRight: 40}}>
-                <div id="scatter-cont"></div>
             </Row>
         </Fragment>
     )
