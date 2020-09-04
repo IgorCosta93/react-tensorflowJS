@@ -13,7 +13,7 @@
     "antd": "^3.15.1",
     "bizcharts": "^3.5.2",
     "bizcharts-plugin-slider": "^2.1.1-beta.1",
-    "papaparse": "^5.0.2",
+    "papaparse": "^5.2.0",
     "plotly.js": "^1.49.2",
     "react": "^16.8.4",
     "react-csv-reader": "^1.2.2",
